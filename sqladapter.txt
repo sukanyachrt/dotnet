@@ -1,0 +1,20 @@
+ Dim strSQL As String
+
+            ' strConnString = "Server=192.168.100.3;Userid=root;Password=root;Database=repairit; pooling = false; charset=utf8;  convert zero datetime=True;"
+            ' strSQL = "SELECT *, CONCAT(`name`, ' ', lastname,' / แผนก ',division) AS FullName,Count(IF(status1 = '1',1,NULL)) AS one,Count(IF(status1 = '2',1,NULL)) AS two,Count(IF(status1 = '3',1,NULL)) AS three,Count(IF(status1 = '4',1,NULL)) AS four FROM   repair INNER JOIN login.`data` ON repairit.`repair`.idinfurmer = login.`data`.id where today BETWEEN '" + date1 + "' AND '" + date2 + "' GROUP BY repairit.`repair`.id"
+            'Dim sql As String = "SELECT *, CONCAT(`name`, ' ', lastname,' / แผนก ',division) AS FullName,Count(IF(status1 = '1',1,NULL)) AS one,Count(IF(status1 = '2',1,NULL)) AS two,Count(IF(status1 = '3',1,NULL)) AS three,Count(IF(status1 = '4',1,NULL)) AS four FROM   repair INNER JOIN login.`data` ON repairit.`repair`.idinfurmer = login.`data`.id  GROUP BY repairit.`repair`.id "
+            'Dim sqlcom As MySqlCommand = New MySqlCommand(sql, conn)
+            Dim sqlcom As New MySqlCommand("SELECT *, CONCAT(`name`, ' ', lastname,' / แผนก ',division) AS FullName,Count(IF(status1 = '1',1,NULL)) AS one,Count(IF(status1 = '2',1,NULL)) AS two,Count(IF(status1 = '3',1,NULL)) AS three,Count(IF(status1 = '4',1,NULL)) AS four,(CASe nameope when '' then '-' ELSE nameope end) as nameope1 FROM   repair INNER JOIN login.`data` ON repairit.`repair`.idinfurmer = login.`data`.id  where  MID(today,1,10) BETWEEN '" + date1 + "' AND '" + date2 + "' GROUP BY repairit.`repair`.id", conn)
+            Dim sqladap As New MySqlDataAdapter(sqlcom)
+            My.Application.ChangeCulture("th-TH")
+            Dim ds As New DataSet()
+            sqladap.Fill(ds, "re2")
+            
+            If sqladap.Fill(ds) > 0 Then
+                DataGridView1.AutoGenerateColumns = False
+                DataGridView1.DataSource = ds
+                DataGridView1.DataMember = "re2"
+                Label1.Text = ""
+            Else
+                Label1.Text = "ไม่มีข้อมูลในช่วงที่ต้องการค้นหา"
+            End If

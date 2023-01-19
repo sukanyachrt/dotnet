@@ -1,0 +1,41 @@
+ Dim SqlString As String = "Select * from data where username='" + Username + "' And password='" + Password + "' AND division='IT'"
+                Dim sqlcmd As MySqlCommand = New MySqlCommand(SqlString, connlogin)
+                If connlogin.State = ConnectionState.Open Then
+                  
+                Else
+                    connlogin.Open()
+                End If
+
+            Dim reader As MySqlDataReader = sqlcmd.ExecuteReader()
+            reader.Read()
+
+            If reader.HasRows Then
+
+                Username = reader("username").ToString()
+                    Password = reader("password").ToString()
+                    frmMain.lblidlogin.Text = reader("id").ToString()
+                    frmMain.Label2.Text = reader("name").ToString() + "  " + reader("lastname")
+                    frmMain.ToolStripButton5.Text = "ชื่อผู้ใช้งาน : " + reader("name").ToString() + " นามสกุล  " + reader("lastname").ToString() + " แผนก " + reader("division").ToString()
+                    frmMain.lblemail.Text = reader("email").ToString()
+
+                    reader.Close()
+                    connlogin.Close()
+                    frmMain.Show()
+                    Me.Hide()
+            Else
+
+                MessageBox.Show("Username และ Password ไม่ถูกต้องค่ะ/ครับ ", "ข้อความเตือน", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                txtPassWord.Clear()
+                    TxtUserName.Clear()
+                    TxtUserName.Focus()
+                    connlogin.Close()
+                End If
+                Exit Sub
+
+
+
+
+
+            Catch ex As Exception
+                MsgBox(ex.Message)
+            End Try
