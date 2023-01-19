@@ -1,0 +1,261 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using MySql.Data.MySqlClient;
+
+namespace WindowsFormsApp1
+{
+    public partial class Form1 : Form
+    {
+        
+        public Form1()
+        {
+            InitializeComponent();
+        }
+        string sum = "";
+        double number1 = 0;
+        double number2 = 0;
+        MySqlConnection connMySql;
+
+        private void btn_7_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox1.Text+"7";
+
+        }
+
+        private void btn_8_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox1.Text + "8";
+        }
+
+        private void btn_9_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox1.Text + "9";
+        }
+
+        private void btn_4_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox1.Text + "4";
+        }
+
+        private void btn_5_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox1.Text + "5";
+        }
+
+        private void btn_6_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox1.Text + "6";
+        }
+
+        private void btn_1_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox1.Text + "1";
+        }
+
+        private void btn_2_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox1.Text + "2";
+        }
+
+        private void btn_3_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox1.Text + "3";
+        }
+
+        private void btn_0_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox1.Text + "0";
+        }
+
+        private void btn_devide_Click(object sender, EventArgs e)
+        {
+            if (textBox1.Text != "")
+            {
+                number1 = double.Parse(textBox1.Text);
+            }
+            textBox1.Text = "";
+            sum = "/";
+
+        }
+
+        private void btn_x_Click(object sender, EventArgs e)
+        {
+            
+            if (textBox1.Text != "")
+            {
+                number1 = double.Parse(textBox1.Text);
+            }
+            textBox1.Text = "";
+            sum = "x";
+        }
+
+        private void btn_neg_Click(object sender, EventArgs e)
+        {
+            if (textBox1.Text != "")
+            {
+                number1 = double.Parse(textBox1.Text);
+            }
+            textBox1.Text = "";
+            sum = "-";
+        }
+
+        private void btn_plus_Click(object sender, EventArgs e)
+        {
+            if (textBox1.Text != "")
+            {
+                number1 = double.Parse(textBox1.Text);
+            }
+            textBox1.Text = "";
+            sum = "+";
+        }
+
+        private void btn_result_Click(object sender, EventArgs e)
+        {
+            number2 = double.Parse(textBox1.Text);
+            string result = number2.ToString();
+            if (sum == "+")
+            {
+                double t = number1 + number2;
+                result += "+" + number1;
+                textBox1.Text = t.ToString();
+
+            }
+            else if(sum == "-")
+            {
+                result += "-" + number1;
+                double t = number1 - number2;
+                textBox1.Text = t.ToString();
+            }
+            else if (sum == "x")
+            {
+                result += "x" + number1;
+                double t = number1 * number2;
+                textBox1.Text = t.ToString();
+            }
+            else if (sum == "/")
+            {
+                result += "/" + number1;
+                double t = number1 / number2;
+                textBox1.Text = t.ToString();
+            }
+            connMySql = new MySqlConnection();
+            connMySql.ConnectionString = "server=localhost;user id=root;password=;database=testdb";
+            connMySql.Open();
+            //MessageBox.Show("การเชื่อมตอฐานขอมูล :  สําเร็จแลว");
+            string sql = "insert into `calculate` (result) values (@result)";
+
+            var cmd = new MySqlCommand(sql, connMySql);
+           
+            cmd.Parameters.AddWithValue("@result", result + "="+ textBox1.Text);
+            
+
+
+
+           
+            try
+            {
+                if (cmd.ExecuteNonQuery() > 0)
+                {
+
+                }
+            }
+            catch
+            {
+                MessageBox.Show("error");
+            }
+
+
+            connMySql.Close();
+        }
+
+        private void btn_ce_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = "";
+        }
+
+        private void btn_c_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = "";
+        }
+
+        private void btn_x2_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = (double.Parse(textBox1.Text) * double.Parse(textBox1.Text)).ToString();
+        }
+
+        private void btn_del_Click(object sender, EventArgs e)
+        {
+            int num = textBox1.Text.Length-1;
+            textBox1.Text = textBox1.Text.Remove(num, 1);
+            
+
+        }
+
+        private void button20_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = (1 / double.Parse(textBox1.Text)).ToString();
+        }
+
+        private void btn_dot_Click(object sender, EventArgs e)
+        {
+            textBox1.Text = textBox1.Text + ".";
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            
+            connMySql = new MySqlConnection();
+            connMySql.ConnectionString = "server=localhost;user id=root;password=;database=testdb";
+            connMySql.Open();
+            string strSql = "select * from `calculate`";
+            DataTable dtb = new DataTable();
+
+            var sqladap = new MySqlDataAdapter(strSql, connMySql);
+
+            listBox1.DataSource = null;
+            listBox1.ValueMember = null;
+
+            if (sqladap.Fill(dtb)>0)
+            {
+                listBox1.DataSource = dtb;
+                listBox1.DisplayMember = "result";
+                
+            }
+            else
+            {
+
+            }
+
+            /*
+            Dim sqlcom As New MySqlCommand("SELECT *, CONCAT(`name`, ' ', lastname,' / แผนก ',division) AS FullName,Count(IF(status1 = '1',1,NULL)) AS one,Count(IF(status1 = '2',1,NULL)) AS two,Count(IF(status1 = '3',1,NULL)) AS three,Count(IF(status1 = '4',1,NULL)) AS four,(CASe nameope when '' then '-' ELSE nameope end) as nameope1 FROM   repair INNER JOIN login.`data` ON repairit.`repair`.idinfurmer = login.`data`.id  where idoperator='" + frmMain.lblidlogin.Text + "' and  MID(today,1,10) BETWEEN '" + date1 + "' AND '" + date2 + "' GROUP BY repairit.`repair`.id", conn)
+            Dim sqladap As New MySqlDataAdapter(sqlcom)
+            My.Application.ChangeCulture("th-TH")
+            Dim ds As New DataSet()
+            sqladap.Fill(ds, "re2")
+
+            If sqladap.Fill(ds) > 0 Then
+                DataGridView1.AutoGenerateColumns = False
+                DataGridView1.DataSource = ds
+                DataGridView1.DataMember = "re2"
+                Label1.Text = ""
+            Else
+                Label1.Text = "ไม่มีข้อมูลในช่วงที่ต้องการค้นหา"
+            End If*/
+            connMySql.Close();
+
+        }
+    }
+}
